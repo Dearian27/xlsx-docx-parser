@@ -2,6 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import docx from "docx";
 import { saveAs } from "file-saver";
 
 import * as xlsx from "xlsx/xlsx.mjs";
@@ -49,44 +50,39 @@ export default function Home() {
     };
   };
 
-  // fetch(
-  //   "https://docs.google.com/spreadsheets/d/1OxwvK-1UUAXy8C31VQFoACJrlZxoN_aXRlYhyiZs0iE/edit?usp=sharing"
-  // ).then((res) => {
-  //   console.log(res);
-  //   console.log(res.json());
-
-  // };
-  // fileReader.readAsBinaryString(selectedFile);
-  // });
-
   const parseDOCX = () => {
     for (let i = 0; i < jsonObject.length; i++) {
       setTimeout(() => {
+        const sections = [
+          {
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: `${jsonObject[i]["id"]}` })],
+              }),
+            ],
+          },
+          {
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: `${jsonObject[i]["name"]}` })],
+              }),
+            ],
+          },
+          {
+            children: [
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `${jsonObject[i]["country"]}` }),
+                ],
+              }),
+            ],
+          },
+        ];
         const doc = new Document({
-          sections: [],
+          sections: [...sections],
           creator: "Вчасно",
         });
-        doc.addSection({
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: `${jsonObject[i]["id"]}` })],
-            }),
-          ],
-        });
-        doc.addSection({
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: `${jsonObject[i]["name"]}` })],
-            }),
-          ],
-        });
-        doc.addSection({
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: `${jsonObject[i]["country"]}` })],
-            }),
-          ],
-        });
+
         saveDocumentToFile(
           doc,
           `${jsonObject[i]["name"]}${jsonObject[i]["id"]}.docx`
