@@ -49,7 +49,6 @@ export default function Home() {
       const sheet = workbook.Sheets[sheetName];
       const parsedData = xlsx.utils.sheet_to_json(sheet);
 
-      console.log(parsedData);
       setJsonObject(parsedData);
     };
   };
