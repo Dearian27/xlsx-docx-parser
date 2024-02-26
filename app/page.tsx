@@ -38,17 +38,13 @@ export default function Home() {
 
   const xlsxToJSON = () => {
     const reader = new FileReader();
-    reader.readAsBinaryString(inputXLSXRef.current.files[0]);
-    console.log("exit1");
+    reader.readAsBinaryString(inputXLSXRef.current!.files[0]);
     reader.onload = (e) => {
-      console.log("exit2");
       const data = e.target.result;
       const workbook = xlsx.read(data, { type: "binary" });
-      console.log(workbook);
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const parsedData = xlsx.utils.sheet_to_json(sheet);
-
       setJsonObject(parsedData);
     };
   };
