@@ -7,7 +7,7 @@ import { saveAs } from "file-saver";
 
 import * as xlsx from "xlsx/xlsx.mjs";
 
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 
 const fakeJSONData = [
   {
@@ -127,7 +127,7 @@ export default function Home() {
           {jsonObject?.map((data, index) => {
             return (
               <tr key={index}>
-                {Object.entries(data).map((entry, index2) => {
+                {Object.entries(data).map((entry: any, index2) => {
                   return (
                     <th key={index + index2} scope="col">
                       {entry[1]}
