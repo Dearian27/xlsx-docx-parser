@@ -28,6 +28,6 @@ export default function WebEditor() {
       className="webviewer"
       ref={viewerRef}
       style={{ height: "100vh", width: "50vw" }}
-    ></div>
+    />
   );
 }

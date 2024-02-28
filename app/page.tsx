@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import docx from "docx";
 import { saveAs } from "file-saver";
