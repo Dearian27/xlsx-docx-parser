@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pdftron/webviewer": "^10.7.2",
     "docx": "^8.5.0",
     "file-saver": "^2.0.5",
     "json-as-xlsx": "^2.5.6",
