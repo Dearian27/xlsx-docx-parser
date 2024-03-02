@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import { createRequest } from "./action";
 import axiosPL from "@/utils/axiosPL";
+import axios from "axios";
 
 async function sha512(str: string) {
   return crypto.subtle
@@ -12,7 +14,7 @@ async function sha512(str: string) {
     });
 }
 
-const Request = async () => {
+const Request = () => {
   // await createRequest();
   // const client_id = "3c28ad80-7b79-4601-9f4c-9ccfa66a0df9";
   const client_id = "66d1ac7f-c794-4c2b-93d4-e83d1cdff5b9";
@@ -21,6 +23,7 @@ const Request = async () => {
   const secret = "MjNiZTcyZGQtYzRjNS00ZjM4LWFmODAtOTgyNWZkYjg0YmMy";
 
   const createRequest = async () => {
+    let token;
     try {
       const res = await axiosPL.post(
         // "https://paperless.com.ua/PplsService/oauth/authorize",
@@ -51,7 +54,29 @@ const Request = async () => {
       const access_token = res2.data?.access_token;
       const refresh_token = res2.data?.refresh_token;
       console.log("access_token: ", access_token);
+      token = access_token;
       console.log("refresh_token: ", refresh_token);
+    } catch (err) {
+      console.log("erroR");
+      console.log(err);
+    }
+
+    console.log("searchDocuments");
+    try {
+      const cookieHeader = `sessionId="Bearer ${token}, Id ${client_id}"`;
+      const res = await axios.post(
+        "https://paperless.com.ua/api2/checked/resource/search",
+        { searchQuery: "" },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            Cookie: cookieHeader,
+          },
+          withCredentials: true, // Дозволяє передавати куки
+        }
+      );
+      console.log(res.data);
     } catch (err) {
       console.log("erroR");
       console.log(err);
@@ -59,7 +84,7 @@ const Request = async () => {
   };
   createRequest();
 
-  return <div>Hello</div>;
+  return <div style={{ color: "#4c4cff" }}></div>;
 };
 
 export default Request;
