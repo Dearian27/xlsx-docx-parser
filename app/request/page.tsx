@@ -129,9 +129,9 @@ const Request = () => {
       {/* <button onClick={searchDocuments}>Hello</button> */}
       {/* <Documents docs={docs} /> */}
       {docs && <h1>{docs}</h1>}
-      <div style={{ color: "#4c4cff", fontSize: 30 }}>{docs!?.length}</div>
+      {/* <div style={{ color: "#4c4cff", fontSize: 30 }}>{docs!?.length}</div> */}
       <div style={{ color: "#4c4cff", fontSize: 30 }}>
-        {docs?.[0]?.toString()}
+        {/* {docs?.[0]?.toString()} */}
       </div>
       {/* <button onClick={searchDocuments}>Find</button> */}
       <div className="list"></div>
