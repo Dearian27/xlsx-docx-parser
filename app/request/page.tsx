@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import axiosPL from "@/utils/axiosPL";
 import "./styles.scss";
 import Documents from "@/components/Documents";
@@ -23,10 +23,13 @@ const secret = "MjNiZTcyZGQtYzRjNS00ZjM4LWFmODAtOTgyNWZkYjg0YmMy";
 
 const Request = () => {
   const [inputValue, setInputValue] = useState("");
-  const [documents, setDocuments] = useState([]);
+  const [docs, setDocs] = useState();
   const [token, setToken] = useState("");
 
+  console.log("docs: ", docs);
+
   const createRequest = async () => {
+    let currentToken: string;
     try {
       const res = await axiosPL.post(
         // "https://paperless.com.ua/PplsService/oauth/authorize",
@@ -52,34 +55,42 @@ const Request = () => {
       );
       const access_token = res2.data?.access_token;
       setToken(access_token);
+      currentToken = access_token;
       const refresh_token = res2.data?.refresh_token;
+      setDocs(refresh_token);
     } catch (err) {
       console.log("erroR");
       // console.log(err);
     }
 
-    console.log("searchDocuments");
-    try {
-      const cookieHeader = `sessionId="Bearer ${token}, Id ${client_id}"`;
-      const res = await axios.post(
-        "https://paperless.com.ua/api2/checked/resource/search",
-        { searchQuery: "", author: "all" },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
-            Cookie: cookieHeader,
-          },
-          withCredentials: true, // Дозволяє передавати куки
-        }
-      );
-      console.log(res);
-    } catch (err) {
-      console.log("erroR");
-      console.log(err);
-    }
+    // console.log("searchDocuments");
+    // let data;
+    // try {
+    //   const cookieHeader = `sessionId="Bearer ${currentToken}, Id ${client_id}"`;
+    //   const res = await axios.post(
+    //     "https://paperless.com.ua/api2/checked/resource/search",
+    //     {},
+    //     {
+    //       headers: {
+    //         Accept: "application/json",
+    //         "Content-Type": "application/json; charset=UTF-8",
+    //         Cookie: cookieHeader,
+    //       },
+    //       withCredentials: true, // Дозволяє передавати куки
+    //     }
+    //   );
+    //   data = res.data;
+    // } catch (err) {
+    //   console.log("erroR");
+    //   console.log(err);
+    // } finally {
+    //   setDocs(data);
+    // }
   };
-  createRequest();
+
+  useEffect(() => {
+    createRequest();
+  }, []);
 
   // const searchDocuments = async () => {
   //   console.log("searchDocuments");
@@ -116,7 +127,14 @@ const Request = () => {
         }}
       />
       {/* <button onClick={searchDocuments}>Hello</button> */}
-      {/* <Documents documents={documents} searchDocuments={searchDocuments} /> */}
+      {/* <Documents docs={docs} /> */}
+      {docs && <h1>{docs}</h1>}
+      {/* <div style={{ color: "#4c4cff", fontSize: 30 }}>{docs!?.length}</div> */}
+      <div style={{ color: "#4c4cff", fontSize: 30 }}>
+        {/* {docs?.[0]?.toString()} */}
+      </div>
+      {/* <button onClick={searchDocuments}>Find</button> */}
+      <div className="list"></div>
     </div>
   );
 };
