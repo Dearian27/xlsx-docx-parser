@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
-import { createRequest } from "./action";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import axiosPL from "@/utils/axiosPL";
+import "./styles.scss";
+import Documents from "@/components/Documents";
 import axios from "axios";
 
 async function sha512(str: string) {
@@ -14,16 +15,21 @@ async function sha512(str: string) {
     });
 }
 
+// const client_id = "3c28ad80-7b79-4601-9f4c-9ccfa66a0df9";
+const client_id = "66d1ac7f-c794-4c2b-93d4-e83d1cdff5b9";
+// const redirect_uri = "Some2";
+// const secret = "MmQ2ZWIwMjAtY2QyNS00MzJkLWE2NDItYmUzYzU0YjUzMGY5";
+const secret = "MjNiZTcyZGQtYzRjNS00ZjM4LWFmODAtOTgyNWZkYjg0YmMy";
+
 const Request = () => {
-  // await createRequest();
-  // const client_id = "3c28ad80-7b79-4601-9f4c-9ccfa66a0df9";
-  const client_id = "66d1ac7f-c794-4c2b-93d4-e83d1cdff5b9";
-  const redirect_uri = "Some2";
-  // const secret = "MmQ2ZWIwMjAtY2QyNS00MzJkLWE2NDItYmUzYzU0YjUzMGY5";
-  const secret = "MjNiZTcyZGQtYzRjNS00ZjM4LWFmODAtOTgyNWZkYjg0YmMy";
+  const [inputValue, setInputValue] = useState("");
+  const [docs, setDocs] = useState();
+  const [token, setToken] = useState("");
+
+  console.log("docs: ", docs);
 
   const createRequest = async () => {
-    let token;
+    let currentToken: string;
     try {
       const res = await axiosPL.post(
         // "https://paperless.com.ua/PplsService/oauth/authorize",
@@ -36,10 +42,7 @@ const Request = () => {
         }
       );
       const code = res.data.code;
-      console.log("code: ", res.data.code);
-
       const client_secret = await sha512(`${client_id}${secret}${code}`);
-      console.log("sha512 client_secret: ", client_secret);
 
       const res2 = await axiosPL.post(
         "https://paperless.com.ua/PplsService/oauth/token",
@@ -50,41 +53,90 @@ const Request = () => {
           code: code,
         }
       );
-      console.log(res2.status);
       const access_token = res2.data?.access_token;
+      setToken(access_token);
+      currentToken = access_token;
       const refresh_token = res2.data?.refresh_token;
-      console.log("access_token: ", access_token);
-      token = access_token;
-      console.log("refresh_token: ", refresh_token);
+      setDocs(refresh_token);
     } catch (err) {
       console.log("erroR");
-      console.log(err);
+      // console.log(err);
     }
 
-    console.log("searchDocuments");
-    try {
-      const cookieHeader = `sessionId="Bearer ${token}, Id ${client_id}"`;
-      const res = await axios.post(
-        "https://paperless.com.ua/api2/checked/resource/search",
-        { searchQuery: "" },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
-            Cookie: cookieHeader,
-          },
-          withCredentials: true, // Дозволяє передавати куки
-        }
-      );
-      console.log(res.data);
-    } catch (err) {
-      console.log("erroR");
-      console.log(err);
-    }
+    // console.log("searchDocuments");
+    // let data;
+    // try {
+    //   const cookieHeader = `sessionId="Bearer ${currentToken}, Id ${client_id}"`;
+    //   const res = await axios.post(
+    //     "https://paperless.com.ua/api2/checked/resource/search",
+    //     {},
+    //     {
+    //       headers: {
+    //         Accept: "application/json",
+    //         "Content-Type": "application/json; charset=UTF-8",
+    //         Cookie: cookieHeader,
+    //       },
+    //       withCredentials: true, // Дозволяє передавати куки
+    //     }
+    //   );
+    //   data = res.data;
+    // } catch (err) {
+    //   console.log("erroR");
+    //   console.log(err);
+    // } finally {
+    //   setDocs(data);
+    // }
   };
-  createRequest();
 
-  return <div style={{ color: "#4c4cff" }}></div>;
+  useEffect(() => {
+    createRequest();
+  }, []);
+
+  // const searchDocuments = async () => {
+  //   console.log("searchDocuments");
+  //   try {
+  //     const cookieHeader = `sessionId="Bearer ${token}, Id ${client_id}"`;
+  //     const res = await axios.post(
+  //       "https://paperless.com.ua/api2/checked/resource/search",
+  //       { searchQuery: "", author: "all" },
+  //       {
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json; charset=UTF-8",
+  //           Cookie: cookieHeader,
+  //         },
+  //         withCredentials: true, // Дозволяє передавати куки
+  //       }
+  //     );
+  //     console.log(res);
+  //   } catch (err) {
+  //     console.log("erroR");
+  //     console.log(err);
+  //   }
+  // };
+
+  return (
+    <div className="documents">
+      <h1>Hello</h1>
+      <input
+        type="text"
+        placeholder="search"
+        value={inputValue}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setInputValue(event.target.value);
+        }}
+      />
+      {/* <button onClick={searchDocuments}>Hello</button> */}
+      {/* <Documents docs={docs} /> */}
+      {docs && <h1>{docs}</h1>}
+      <div style={{ color: "#4c4cff", fontSize: 30 }}>{docs!?.length}</div>
+      <div style={{ color: "#4c4cff", fontSize: 30 }}>
+        {docs?.[0]?.toString()}
+      </div>
+      {/* <button onClick={searchDocuments}>Find</button> */}
+      <div className="list"></div>
+    </div>
+  );
 };
 
 export default Request;

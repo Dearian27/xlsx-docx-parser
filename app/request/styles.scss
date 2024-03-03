@@ -1,0 +1,29 @@
+.documents {
+  padding: 150px;
+
+  > input {
+    padding: 20px;
+    font-size: 20px;
+  }
+  > button {
+    padding: 20px;
+    font-size: 20px;
+  }
+
+  .list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    // gap: 5px;
+    .doc {
+      color: #4c4cff;
+      font-family: var(--font-montserrat);
+      font-size: 32px;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
